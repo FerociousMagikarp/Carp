@@ -1,7 +1,8 @@
-#include <iostream>
+#include "controller.h"
 
 int main(int argc, char** argv)
 {
-    std::cout << "Hello World!" << std::endl;
+    Carp::Controller controller;
+    controller.Loop();
     return 0;
 }

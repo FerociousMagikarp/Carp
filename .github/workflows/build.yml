@@ -1,13 +1,13 @@
-name: Toy
+name: Carp
 
 on: [push, pull_request]
 
 jobs:
   linux-build:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
     strategy:
       matrix:
-        compiler: [gcc-12, clang-15]
+        compiler: [gcc, clang]
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -15,29 +15,26 @@ jobs:
       - name: Install Dependencies
         run: |
           sudo apt-get update
-          if [[ "${{ matrix.compiler }}" == gcc-12 ]]; then
-            sudo apt-get install -y gcc-12 g++-12
-            sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-12 90
-            sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-12 90
+          if [[ "${{ matrix.compiler }}" == gcc ]]; then
+            sudo apt-get install -y gcc g++
           else
-            sudo apt-get install -y clang-15
-            sudo update-alternatives --install /usr/bin/clang clang /usr/bin/clang-15 90
-            sudo update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-15 90
+            sudo apt-get install -y clang
+            clang --version
           fi
 
       - name: Configure CMake GCC
-        if: matrix.compiler == 'gcc-12'
+        if: matrix.compiler == 'gcc'
         run: |
           mkdir build && cd build
           cmake .. \
-            -DCMAKE_C_COMPILER=gcc-12 -DCMAKE_CXX_COMPILER=g++-12 -DCMAKE_BUILD_TYPE=Release
+            -DCMAKE_C_COMPILER=gcc -DCMAKE_CXX_COMPILER=g++ -DCMAKE_BUILD_TYPE=Release
 
       - name: Configure CMake Clang
-        if: matrix.compiler == 'clang-15'
+        if: matrix.compiler == 'clang'
         run: |
           mkdir build && cd build
           cmake .. \
-            -DCMAKE_C_COMPILER=clang-15 -DCMAKE_CXX_COMPILER=clang++-15 -DCMAKE_BUILD_TYPE=Release
+            -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_BUILD_TYPE=Release
 
       - name: Build
         run: |
@@ -69,7 +66,7 @@ jobs:
           cmake --build . --config Release --parallel 4
 
   macos-build:
-    runs-on: macos-13
+    runs-on: macos-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -81,7 +78,7 @@ jobs:
           cmake .. \
             -DCMAKE_C_COMPILER=clang \
             -DCMAKE_CXX_COMPILER=clang++ \
-            -DCMAKE_BUILD_TYPE=Release
+            -DCMAKE_BUILD_TYPE=Release \
 
       - name: Build
         run: |

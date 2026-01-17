@@ -8,7 +8,7 @@ namespace Carp
 {
 static std::string TransToUCCIName(std::string_view sv)
 {
-	auto result = sv | std::views::filter([](char c) -> bool { return !std::isspace(c); })
+	auto result = sv | std::views::filter([](unsigned char c) -> bool { return !std::isspace(c); })
 					 | std::views::transform([](unsigned char c) -> char { return std::tolower(c); });
 	return std::string{ result.begin(), result.end() };
 }

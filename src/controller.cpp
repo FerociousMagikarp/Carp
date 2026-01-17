@@ -1,7 +1,6 @@
 #include "controller.h"
 #include <variant>
 #include <iostream>
-#include <syncstream>
 #include <string_view>
 #include <optional>
 #include <vector>
@@ -9,6 +8,7 @@
 #include "protocol/ucci_command.h"
 #include "protocol/option.h"
 #include "core/engine.h"
+#include "utils/osyncstream.h"
 
 namespace Carp
 {
@@ -127,7 +127,7 @@ void Controller::Loop()
 			// 如果协议类型不同就切换新的协议
 			if (m_command == nullptr || !m_command->IsSameType(*protocol_type))
 				m_command = std::make_unique<Command>(*protocol_type, *m_engine, *m_option_container);
-			std::osyncstream{ std::cout } << *m_command << std::endl;
+			OSyncStream{ std::cout } << *m_command << std::endl;
 		}
 		else
 		{
@@ -139,7 +139,7 @@ void Controller::Loop()
 				continue;
 			auto result = m_command->AnalyzeCommand(split_cmd);
 			if (!result.empty())
-				std::osyncstream{ std::cout } << result << std::endl;
+				OSyncStream{ std::cout } << result << std::endl;
 		}
 	}
 }
